@@ -10,17 +10,23 @@ class pinger(tk.Tk):
     def initialize(self):        
         self.iWidth = tk.StringVar()
         self.iHeight = tk.StringVar()
+        self.imgSelect = tk.StringVar()
 
         # row 1
         labelDisclaim = tk.Label(self, text='Currently only works with jpegs')
         labelDisclaim.grid(column=2, row=1)
 
         # row 2
-        labelWidth = tk.Label(self, text='Enter the width of the grid, in pixels.')
-        labelWidth.grid(column=4,row=2)
 
         buttonOpen = tk.Button(self, text="Select an Image", command=self.openExplorer)
-        buttonOpen.grid(column=2, row=2)
+        buttonOpen.grid(column=1, row=2)
+
+        labelSelected= tk.Label(self, text="Selected Image: ")
+        labelSelected.grid(column=2,row=2)
+
+        labelImgName = tk.Label(self, textvariable=self.imgSelect)
+        labelImgName.grid(column=3,row=2)
+        
 
         # row 3
         labelStaticImg= tk.Label(self, text="Width of image, in pixels: ")
@@ -34,6 +40,13 @@ class pinger(tk.Tk):
 
         labelImgHeight = tk.Label(self, textvariable=self.iHeight)
         labelImgHeight.grid(column=4,row=3)
+
+        # row 4
+        labelWidth = tk.Label(self, text="Enter how many squares width-wise")
+        labelWidth.grid(column=1,row=4)
+
+        labelHeight = tk.Label(self, text="Enter how many squares height-wise")
+        labelHeight.grid(column=3,row=4)
 
         # row 9
         button = tk.Button(self,text="exit",command=self.closeProgram)
@@ -56,10 +69,12 @@ class pinger(tk.Tk):
         filename= filedialog.askopenfilename(initialdir="/", title="Select an Image", filetypes=(("jpeg files", "*.jpg"),("all files", "*.*")))
         if filename:
            print(filename)
+           self.imgSelect.set(filename)
            self.openFile(filename)
+           
 
 if __name__ == "__main__":
     app = pinger()
     app.title('Image Gridder')
-    app.minsize(height=680,width=480)
+    app.minsize(height= 480, width=680)
     app.mainloop()
