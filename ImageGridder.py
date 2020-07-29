@@ -13,8 +13,15 @@ class gridder(tk.Tk):
         self.iWidth = tk.StringVar()
         self.iHeight = tk.StringVar()
         self.imgSelect = tk.StringVar()
-        self.bWidth = 0
-        self.bHeight= 0
+        self.squareLength= tk.IntVar()
+        self.ratioX=tk.IntVar()
+        self.ratioY=tk.IntVar()
+        self.checkSquare = tk.IntVar()
+        
+        self.checkSquare.set(0)
+        self.ratioX.set(10)
+        self.ratioY.set(10)
+        self.squareLength.set(120)
         
 
         # row 1
@@ -22,10 +29,6 @@ class gridder(tk.Tk):
         labelDisclaim.grid(column=2, row=1)
 
         # row 2
-<<<<<<< HEAD
-=======
-
->>>>>>> ced526c8d061d059d8a23ac2d650dcc927ce2f6c
         buttonOpen = tk.Button(self, text="Select an Image", command=self.openExplorer)
         buttonOpen.grid(column=1, row=2)
 
@@ -50,33 +53,36 @@ class gridder(tk.Tk):
         labelImgHeight.grid(column=4,row=3)
 
         # row 4
-<<<<<<< HEAD
-        labelInstructions = tk.Label(self, text='First, select an image, then below enter, in pixels, how wide and tall you want each grid section to be. If left empty, it will try to square them. Default value will try to have a 10x10 grid.', anchor='w', wraplength=200)
-        labelInstructions.grid(column=2,row=4)
+        labelRatioX = tk.Label(self, text="Enter the Ratio along the X axis, default is 10: ")
+        labelRatioX.grid(column=1,row=4)
+
+        entryRatioX = tk.Entry(self, textvariable=self.ratioX)
+        entryRatioX.grid(column=2,row=4)
+
+        labelRatioY =tk.Label(self, text="Enter the Ratio along the Y axis, default is 10: ")
+        labelRatioY.grid(column=3,row=4)
+
+        entryRatioY = tk.Entry(self, textvariable=self.ratioY)
+        entryRatioY.grid(column=4,row=4)
 
         # row 5
-        labelWidth = tk.Label(self, text='Enter the width of the grid, in pixels: ')
-        labelWidth.grid(column=1,row=5)
+        labelSquare = tk.Label(self, text="For strict squares, in the sense of a battle map, check this ->")
+        labelSquare.grid(column=1,row=5)
+
+        checkboxSquare = tk.Checkbutton(self, variable=self.checkSquare, text="If checked, it will ignore the ratio and apply squares that are specified by the entry, (default 120x120) ->",wraplength=150)
+        checkboxSquare.grid(column=2,row=5)
+
+        labelSquareLength = tk.Label(self, text="Side length of Square: ")
+        labelSquareLength.grid(column=3,row=5)
+
+        entrySquareLength = tk.Entry(self, textvariable=self.squareLength)
+        entrySquareLength.grid(column=4,row=5)
+
         
-        labelHeight = tk.Label(self, text='Enter the width of the grid, in pixels: ')
-        labelHeight.grid(column=3, row=5)
-
-        # row 8 non-grid image to gridded image, pics
-        
-
-=======
-        defaultLabel = tk.Label(self, text="The default square is a side length of 1/10th the image height/width. Whichever is smaller.", wraplength=100)
-        defaultLabel.grid(column=2,row=4)
-
-        # row 5
-        dataButton = tk.Button(self, text="Enter", command=self.dataEntry)
-        dataButton.grid(column=3,row=5)
-
         # row 6
         execButton = tk.Button(self, text="Gridify", command=self.gridify)
-        execButton.grid(column=3,row=6)
+        execButton.grid(column=2,row=6)
         
->>>>>>> ced526c8d061d059d8a23ac2d650dcc927ce2f6c
         # row 9
         button = tk.Button(self,text="Exit",command=self.closeProgram)
         button.grid(column=2,row=9)
@@ -92,8 +98,20 @@ class gridder(tk.Tk):
         self.iWidth.set(width)
 
     def gridify(self):
-        sidelengthy=int(self.iWidth.get())/10
-        sidelengthx=int(self.iHeight.get())/10
+        ratioX=0
+        ratioY=0
+        sidelengthy=0
+        sidelengthx=0
+        if self.checkSquare.get():
+            ratioX=int(self.squareLength.get())
+            ratioY=int(self.squareLength.get())
+            sidelengthx=ratioX
+            sidelengthy=ratioY
+        else:
+            ratioX=int(self.ratioX.get())
+            ratioY=int(self.ratioY.get())
+            sidelengthy=int(self.iWidth.get())/ratioY
+            sidelengthx=int(self.iHeight.get())/ratioX
         image=Image.open(self.imgSelect.get())
         my_dpi=300.
 
@@ -115,10 +133,11 @@ class gridder(tk.Tk):
 
         ax.imshow(image)
 
-        
+        token=self.imgSelect.get().split('/')
+        saveName= "gridded_"+token[-1]
         
         # Save the figure
-        fig.savefig('gridify.jpg',dpi=my_dpi)
+        fig.savefig(saveName,dpi=my_dpi)
 
     def closeProgram(self):
         self.destroy()
@@ -141,8 +160,5 @@ class gridder(tk.Tk):
 if __name__ == "__main__":
     app = gridder()
     app.title('Image Gridder')
-<<<<<<< HEAD
-=======
     app.minsize(height= 480, width=680)
->>>>>>> ced526c8d061d059d8a23ac2d650dcc927ce2f6c
     app.mainloop()
