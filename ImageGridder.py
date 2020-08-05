@@ -1,8 +1,10 @@
+from PIL import Image
 import tkinter as tk
 from tkinter import filedialog
-from PIL import Image
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as PLT
 import matplotlib.ticker as plticker
+import os
+import sys
 
 class gridder(tk.Tk):
     def __init__(self):
@@ -17,7 +19,9 @@ class gridder(tk.Tk):
         self.ratioX=tk.IntVar()
         self.ratioY=tk.IntVar()
         self.checkSquare = tk.IntVar()
+        self.colorLine= tk.StringVar()
         
+        self.colorLine.set('k')
         self.checkSquare.set(0)
         self.ratioX.set(10)
         self.ratioY.set(10)
@@ -80,8 +84,14 @@ class gridder(tk.Tk):
 
         
         # row 6
+        labelColor= tk.Label(self, text="Enter a color for the grid, valid choices black=k, blue=b, green=g, red=r, white=w, brown=brown, yellow=yellow, cyan=c. Default is black: ",wraplength=250)
+        labelColor.grid(column=1,row=6)
+
+        entryColor = tk.Entry(self, textvariable=self.colorLine)
+        entryColor.grid(column=2,row=6)
+        
         execButton = tk.Button(self, text="Gridify", command=self.gridify)
-        execButton.grid(column=2,row=6)
+        execButton.grid(column=4,row=6)
         
         # row 9
         button = tk.Button(self,text="Exit",command=self.closeProgram)
@@ -90,6 +100,9 @@ class gridder(tk.Tk):
         # row 10
         labelSig = tk.Label(self, text='By Johnathan Keith, 2020. Ver 1.0. This is free-to-use, and will always be. This was willingly distributed to the public.',wraplength=350)
         labelSig.grid(column=2,row=10)
+
+        labelDisclaimer = tk.Label(self, text="This program does NOT generate pop up windows for bad data entries. If the image does not generate into the folder the script is in, you did something wrong.",wraplength=200)
+        labelDisclaimer.grid(column=4,row=10)
 
     def openFile(self, imagefilename):
         Img = Image.open(imagefilename)
@@ -116,7 +129,7 @@ class gridder(tk.Tk):
         my_dpi=300.
 
         #set the figure up
-        fig=plt.figure(figsize=(float(image.size[0])/my_dpi,float(image.size[1])/my_dpi),dpi=my_dpi)
+        fig=PLT.figure(figsize=(float(image.size[0])/my_dpi,float(image.size[1])/my_dpi),dpi=my_dpi)
         ax=fig.add_subplot(111)
 
         #remove whitespace
@@ -129,15 +142,18 @@ class gridder(tk.Tk):
         ax.yaxis.set_major_locator(locy)
 
         #add the grid
-        ax.grid(which='major', axis='both', linestyle='-',color='k')
+        ax.grid(which='major', axis='both', linestyle='-',color=self.colorLine.get())
 
         ax.imshow(image)
 
         token=self.imgSelect.get().split('/')
         saveName= "gridded_"+token[-1]
+        subdirect = 'gridded_images'
+        if not os.path.exists(subdirect):
+            os.makedirs(subdirect)
         
         # Save the figure
-        fig.savefig(saveName,dpi=my_dpi)
+        fig.savefig(subdirect+'/'+saveName,dpi=my_dpi)
 
     def closeProgram(self):
         self.destroy()
@@ -152,7 +168,6 @@ class gridder(tk.Tk):
     def openExplorer(self):
         filename= filedialog.askopenfilename(initialdir="/", title="Select an Image", filetypes=(("jpeg files", "*.jpg"),("all files", "*.*")))
         if filename:
-           print(filename)
            self.imgSelect.set(filename)
            self.openFile(filename)
            
@@ -160,5 +175,4 @@ class gridder(tk.Tk):
 if __name__ == "__main__":
     app = gridder()
     app.title('Image Gridder')
-    app.minsize(height= 480, width=680)
     app.mainloop()
